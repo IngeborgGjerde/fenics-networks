@@ -3,6 +3,8 @@
 #   - fenics_mixed_dimensional 
 #   - fenics_ii 
 
+# TODO: We don't need fenics-mixed-dim here anymore
+
 FROM ceciledc/fenics_mixed_dimensional:21-06-22
 
 USER root
@@ -27,13 +29,6 @@ RUN git clone https://bitbucket.org/fenics-apps/cbc.block && \
     cd cbc.block && \
     python setup.py install --user && \
     cd ..
-
-# ulfy
-RUN git clone https://github.com/MiroK/ulfy.git && \
-    cd ulfy && \
-    git checkout -b 42dfe51c821acffbccc0df26d7b9549a5cb949eb && \
-    python setup.py install --user && \
-    cd ..
-
+    
 # fix decorator error by reinstalling scipy
 RUN pip uninstall -y scipy && pip install scipy
