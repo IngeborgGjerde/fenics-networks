@@ -18,10 +18,12 @@ if __name__ == "__main__":
     import os
     os.system('dijitso clean')
     
+    p_bc = Expression('x[0]', degree=1)
     
     print('n_edges   fenics_ii   fenics_mixed_dim')
-    # repeat N=0 so the cache can be initialized before the timing
-    for N in [0,0,1,2,3,4,5]:
+    # repeat N=0 so the cache can be initialized for both
+    # versions of the code before we start timing
+    for N in [0,0,1,2,3,4,5,6,7]:
         
         
         if N ==0:
@@ -33,7 +35,7 @@ if __name__ == "__main__":
             g.nodes()[1]['pos']=[1,0]
             
         else:
-            g = nx.hexagonal_lattice_graph(1,N)
+            g = nx.hexagonal_lattice_graph(N,N)
             g = nx.convert_node_labels_to_integers(g)
         
         # Run and time fenics_ii version
@@ -42,11 +44,14 @@ if __name__ == "__main__":
         G.make_submeshes()
         
         start_time = time.time()
-        model = gn_ii.MixedHydraulicNetwork(G)
+        model = gn_ii.MixedHydraulicNetwork(G, p_bc=p_bc)
         qp = model.solve()
         
         fenics_ii_times.append(time.time() - start_time)
         
+        
+        if N != 0:
+            File('p.pvd') << qp[G.num_edges]
         
         # Run and time fenics_mixed_dim version
         G = gn_md.copy_from_nx_graph(g)
@@ -54,11 +59,12 @@ if __name__ == "__main__":
         G.make_submeshes()
         
         start_time = time.time()
-        model = gn_md.MixedHydraulicNetwork_mixed_dim(G)
+        model = gn_md.MixedHydraulicNetwork_mixed_dim(G, p_bc=p_bc)
         qp = model.solve()
         
         fenics_mixed_dim_times.append(time.time() - start_time)
         
         print(f'  {G.num_edges:2.0f}     {fenics_ii_times[-1]:1.1f}s    {fenics_mixed_dim_times[-1]:1.1f}s')
+        
         
         
