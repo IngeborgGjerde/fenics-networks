@@ -338,7 +338,7 @@ RT = {
 }
 
 
-class MixedHydraulicNetwork:
+class MixedHydraulicNetwork_ii:
     """
     Bilinear forms a and L for the dual mixed form of the hydraulic equations
             Res*q + d/ds p = g
@@ -585,7 +585,7 @@ if __name__ == "__main__":
     G = copy_from_nx_graph(G)
     G.make_mesh()
     G.make_submeshes()
-    model = MixedHydraulicNetwork(G)
+    model = MixedHydraulicNetwork_ii(G)
     qp = model.solve()
     
     
